@@ -136,14 +136,14 @@ void EnterWindow::choose_directory(QLineEdit *path) {
 bool EnterWindow::check_key() {
     QString key_string = enter_modification->text();
 
-    if (key_string.length() != 8) {
-       QMessageBox::warning(this, "Ошибка", "Введите ровно 8 символов!");
+    if (key_string.length() != 16) {
+       QMessageBox::warning(this, "Ошибка", "Введите ровно 8 байт!");
        return false;
     }
 
-    QRegularExpression valid_chars("^[A-Za-z0-9]{8}$");
+    QRegularExpression valid_chars("^[0-9A-Fa-f]{16}$");
     if (!valid_chars.match(key_string).hasMatch()) {
-        QMessageBox::warning(this, "Ошибка", "Ключ должен содержать только латинские буквы и цифры!");
+        QMessageBox::warning(this, "Ошибка", "Некорректный HEX-ключ!");
         return false;
     }
 
@@ -252,7 +252,7 @@ void EnterWindow::run() {
     }
 
     QString key_string = enter_modification->text();
-    key_bytes = key_string.toUtf8();
+    key_bytes = QByteArray::fromHex(key_string.toUtf8());
 
     XOR operation_xor(key_bytes, this);
 
